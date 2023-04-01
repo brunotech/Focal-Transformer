@@ -124,17 +124,25 @@ def build_transform(is_train, config):
     if resize_im:
         if config.TEST.CROP:
             size = int((256 / 224) * config.DATA.IMG_SIZE)
-            t.append(
-                transforms.Resize(size, interpolation=_pil_interp(config.DATA.INTERPOLATION)),
-                # to maintain same ratio w.r.t. 224 images
+            t.extend(
+                (
+                    transforms.Resize(
+                        size,
+                        interpolation=_pil_interp(config.DATA.INTERPOLATION),
+                    ),
+                    transforms.CenterCrop(config.DATA.IMG_SIZE),
+                )
             )
-            t.append(transforms.CenterCrop(config.DATA.IMG_SIZE))
         else:
             t.append(
                 transforms.Resize((config.DATA.IMG_SIZE, config.DATA.IMG_SIZE),
                                   interpolation=_pil_interp(config.DATA.INTERPOLATION))
             )
 
-    t.append(transforms.ToTensor())
-    t.append(transforms.Normalize(IMAGENET_DEFAULT_MEAN, IMAGENET_DEFAULT_STD))
+    t.extend(
+        (
+            transforms.ToTensor(),
+            transforms.Normalize(IMAGENET_DEFAULT_MEAN, IMAGENET_DEFAULT_STD),
+        )
+    )
     return transforms.Compose(t)

@@ -111,8 +111,7 @@ def main(config):
     max_accuracy = 0.0
 
     if config.TRAIN.AUTO_RESUME:
-        resume_file = auto_resume_helper(config.OUTPUT)
-        if resume_file:
+        if resume_file := auto_resume_helper(config.OUTPUT):
             if config.MODEL.RESUME:
                 logger.warning(f"auto-resume changing resume file from {config.MODEL.RESUME} to {resume_file}")
             config.defrost()
@@ -149,7 +148,7 @@ def main(config):
 
     total_time = time.time() - start_time
     total_time_str = str(datetime.timedelta(seconds=int(total_time)))
-    logger.info('Training time {}'.format(total_time_str))
+    logger.info(f'Training time {total_time_str}')
 
 
 def train_one_epoch(config, model, criterion, data_loader, optimizer, epoch, mixup_fn, lr_scheduler):
@@ -285,15 +284,15 @@ def validate(config, data_loader, model):
 def throughput(data_loader, model, logger):
     model.eval()
 
-    for idx, (images, _) in enumerate(data_loader):
+    for images, _ in data_loader:
         images = images.cuda(non_blocking=True)
         batch_size = images.shape[0]
-        for i in range(50):
+        for _ in range(50):
             model(images)
         torch.cuda.synchronize()
-        logger.info(f"throughput averaged with 30 times")
+        logger.info("throughput averaged with 30 times")
         tic1 = time.time()
-        for i in range(30):
+        for _ in range(30):
             model(images)
         torch.cuda.synchronize()
         tic2 = time.time()
@@ -339,7 +338,7 @@ if __name__ == '__main__':
     config.freeze()
 
     config.defrost()
-    config.OUTPUT = os.getenv('PT_OUTPUT_DIR') if os.getenv('PT_OUTPUT_DIR') else config.OUTPUT
+    config.OUTPUT = os.getenv('PT_OUTPUT_DIR') or config.OUTPUT
     config.freeze()
 
     os.makedirs(config.OUTPUT, exist_ok=True)

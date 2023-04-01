@@ -10,7 +10,7 @@ from .focal_transformer import FocalTransformer as focal
 def build_model(config):
     model_type = config.MODEL.TYPE
     print(f"Creating model: {model_type}")
-    model = eval(model_type)(
+    return eval(model_type)(
         img_size=config.DATA.IMG_SIZE,
         patch_size=config.MODEL.FOCAL.PATCH_SIZE,
         in_chans=config.MODEL.FOCAL.IN_CHANS,
@@ -26,17 +26,16 @@ def build_model(config):
         drop_path_rate=config.MODEL.DROP_PATH_RATE,
         ape=config.MODEL.FOCAL.APE,
         patch_norm=config.MODEL.FOCAL.PATCH_NORM,
-        use_shift=config.MODEL.FOCAL.USE_SHIFT, 
+        use_shift=config.MODEL.FOCAL.USE_SHIFT,
         expand_stages=config.MODEL.FOCAL.EXPAND_STAGES,
-        expand_sizes=config.MODEL.FOCAL.EXPAND_SIZES, 
-        expand_layer=config.MODEL.FOCAL.EXPAND_LAYER,         
-        focal_pool=config.MODEL.FOCAL.FOCAL_POOL,     
-        focal_stages=config.MODEL.FOCAL.FOCAL_STAGES, 
-        focal_windows=config.MODEL.FOCAL.FOCAL_WINDOWS,                                                   
-        focal_levels=config.MODEL.FOCAL.FOCAL_LEVELS,    
-        use_conv_embed=config.MODEL.FOCAL.USE_CONV_EMBED, 
-        use_layerscale=config.MODEL.FOCAL.USE_LAYERSCALE, 
-        use_pre_norm=config.MODEL.FOCAL.USE_PRE_NORM, 
-        use_checkpoint=config.TRAIN.USE_CHECKPOINT
+        expand_sizes=config.MODEL.FOCAL.EXPAND_SIZES,
+        expand_layer=config.MODEL.FOCAL.EXPAND_LAYER,
+        focal_pool=config.MODEL.FOCAL.FOCAL_POOL,
+        focal_stages=config.MODEL.FOCAL.FOCAL_STAGES,
+        focal_windows=config.MODEL.FOCAL.FOCAL_WINDOWS,
+        focal_levels=config.MODEL.FOCAL.FOCAL_LEVELS,
+        use_conv_embed=config.MODEL.FOCAL.USE_CONV_EMBED,
+        use_layerscale=config.MODEL.FOCAL.USE_LAYERSCALE,
+        use_pre_norm=config.MODEL.FOCAL.USE_PRE_NORM,
+        use_checkpoint=config.TRAIN.USE_CHECKPOINT,
     )
-    return model

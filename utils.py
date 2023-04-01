@@ -89,13 +89,15 @@ def auto_resume_helper(output_dir):
     checkpoints = os.listdir(output_dir)
     checkpoints = [ckpt for ckpt in checkpoints if ckpt.endswith('pth')]
     print(f"All checkpoints founded in {output_dir}: {checkpoints}")
-    if len(checkpoints) > 0:
-        latest_checkpoint = max([os.path.join(output_dir, d) for d in checkpoints], key=os.path.getmtime)
+    if checkpoints:
+        latest_checkpoint = max(
+            (os.path.join(output_dir, d) for d in checkpoints),
+            key=os.path.getmtime,
+        )
         print(f"The latest checkpoint founded: {latest_checkpoint}")
-        resume_file = latest_checkpoint
+        return latest_checkpoint
     else:
-        resume_file = None
-    return resume_file
+        return None
 
 
 def reduce_tensor(tensor):

@@ -30,21 +30,21 @@ class ZipData(data.Dataset):
                 cls_idx = [l for l in line.split('\t') if l]
                 if not cls_idx:
                     continue
-                assert len(cls_idx) >= 2, "invalid line: {}".format(line)
+                assert len(cls_idx) >= 2, f"invalid line: {line}"
                 idx = int(cls_idx[1])
                 cls = cls_idx[0]
                 del cls_idx
                 at_idx = cls.find('@')
-                assert at_idx >= 0, "invalid class: {}".format(cls)
+                assert at_idx >= 0, f"invalid class: {cls}"
                 cls = cls[at_idx + 1:]
                 if cls.startswith('/'):
                     # Python ZipFile expects no root
                     cls = cls[1:]
-                assert cls, "invalid class in line {}".format(line)
+                assert cls, f"invalid class in line {line}"
                 prev_idx = self.class_to_idx.get(cls)
-                assert prev_idx is None or prev_idx == idx, "class: {} idx: {} previously had idx: {}".format(
-                    cls, idx, prev_idx
-                )
+                assert (
+                    prev_idx is None or prev_idx == idx
+                ), f"class: {cls} idx: {idx} previously had idx: {prev_idx}"
                 self.class_to_idx[cls] = idx
 
         for fst in self._zip_file.infolist():
@@ -57,10 +57,10 @@ class ZipData(data.Dataset):
             ext = op.splitext(fname)[1].lower()
             if ext in extensions:
                 self.samples.append((fname, target))
-        assert len(self), "No images found in: {} with map: {}".format(self._path, map_file)
+        assert len(self), f"No images found in: {self._path} with map: {map_file}"
 
     def __repr__(self):
-        return 'ZipData({}, size={})'.format(self._path, len(self))
+        return f'ZipData({self._path}, size={len(self)})'
 
     def __getstate__(self):
         return {
@@ -76,7 +76,7 @@ class ZipData(data.Dataset):
         zip_file = self.zip_dict[pid]
 
         if index >= len(self) or index < 0:
-            raise KeyError("{} is invalid".format(index))
+            raise KeyError(f"{index} is invalid")
         path, target = self.samples[index]
         try:
             sample = Image.open(BytesIO(zip_file.read(path))).convert('RGB')
